@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Menu</title>
+<link rel="stylesheet" href="menu.css">
+</head>
+<body>
+<div class="menu">
+  <div class="menu-header">
+    <button class="pin-btn" id="pinBtn">📌</button>
+    <span class="menu-title">桌面工具</span>
+    <button class="close-btn" id="closeBtn">✕</button>
+  </div>
+  <div class="menu-items">
+    <div class="menu-item" data-action="render-html">
+      <span class="item-icon">🌐</span>
+      <span class="item-label">Render HTML</span>
+    </div>
+    <div class="menu-item" data-action="json-format">
+      <span class="item-icon">📋</span>
+      <span class="item-label">JSON 格式化</span>
+    </div>
+  </div>
+</div>
+<script src="menu.js"></script>
+</body>
+</html>

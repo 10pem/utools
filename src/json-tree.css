@@ -1,0 +1,85 @@
+.json-tree {
+  font-family: 'Cascadia Code', 'Fira Code', 'Consolas', 'Courier New', monospace;
+  font-size: 13px;
+  line-height: 1.7;
+  color: #cdd6f4;
+}
+
+.json-entry {
+  position: relative;
+}
+
+.json-line {
+  padding: 1px 4px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+.json-toggle {
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.json-toggle:hover,
+.json-closing-line:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.json-arrow {
+  display: inline-block;
+  width: 14px;
+  text-align: center;
+  color: #6c7086;
+  font-size: 10px;
+  user-select: none;
+  margin-right: 2px;
+}
+
+.json-key {
+  color: #89b4fa;
+}
+
+.json-sep {
+  color: #6c7086;
+  margin-right: 2px;
+}
+
+.json-string {
+  color: #a6e3a1;
+}
+
+.json-number {
+  color: #fab387;
+}
+
+.json-boolean {
+  color: #cba6f7;
+}
+
+.json-null {
+  color: #f38ba8;
+}
+
+.json-bracket {
+  color: #cdd6f4;
+}
+
+.json-comma {
+  color: #585b70;
+}
+
+.json-preview {
+  color: #585b70;
+  font-style: italic;
+  font-family: -apple-system, 'Segoe UI', sans-serif;
+  font-size: 11px;
+  user-select: none;
+  margin: 0 2px;
+}
+
+.json-closing-line {
+  cursor: pointer;
+  padding: 1px 4px;
+  border-radius: 3px;
+  transition: background 0.1s;
+}

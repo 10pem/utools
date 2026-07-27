@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JSON 格式化结果</title>
+    <link rel="stylesheet" href="json-tree.css" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: -apple-system, "Segoe UI", sans-serif;
+        background: #1e1e2e;
+        padding: 16px;
+        overflow-x: auto;
+      }
+      .toast {
+        position: fixed;
+        top: 12px;
+        right: 12px;
+        background: #313244;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-size: 13px;
+        opacity: 0;
+        transition: opacity 0.25s;
+        pointer-events: none;
+        z-index: 100;
+      }
+      .toast.show {
+        opacity: 1;
+      }
+      .toast.success {
+        color: #a6e3a1;
+      }
+      .toast.error {
+        color: #f38ba8;
+        background: #352a2c;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="toast" id="toast"></div>
+    <div id="json-tree"></div>
+    <script src="json-tree.js"></script>
+    <script>
+      window.api.onJsonResult(({ formatted, error }) => {
+        const root = document.getElementById("json-tree");
+        const toast = document.getElementById("toast");
+        if (error) {
+          root.textContent = error;
+          root.style.color = "#f38ba8";
+          root.style.fontFamily =
+            "'Cascadia Code','Fira Code','Consolas',monospace";
+          toast.className = "toast error show";
+          toast.textContent = "❌ 格式化失败";
+        } else {
+          try {
+            const data = JSON.parse(formatted);
+            buildJsonTree(root, data);
+            toast.className = "toast success show";
+            toast.textContent = "✓ 已复制到剪贴板";
+            setTimeout(() => {
+              toast.classList.remove("show");
+            }, 2500);
+          } catch (e) {
+            root.textContent = "解析错误：" + e.message;
+            root.style.color = "#f38ba8";
+            toast.className = "toast error show";
+            toast.textContent = "❌ 解析失败";
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
