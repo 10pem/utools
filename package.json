@@ -1,13 +1,46 @@
 {
   "name": "desktop-tool",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "桌面工具 - HTML渲染 / JSON格式化",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "build": "electron-builder",
+    "dist": "electron-builder --win --x64"
+  },
+  "build": {
+    "appId": "com.desktop.tool",
+    "productName": "桌面工具",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "src/**/*",
+      "assets/**/*"
+    ],
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ],
+      "icon": "assets/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "installerSidebar": null
+    },
+    "asarUnpack": [
+      "node_modules/uiohook-napi/**"
+    ]
   },
   "dependencies": {
-    "electron": "^33.0.0",
     "uiohook-napi": "^1.5.0"
+  },
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^25.1.8"
   }
 }

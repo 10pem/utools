@@ -94,3 +94,54 @@ body {
   text-align: center;
   opacity: 0.85;
 }
+
+.ts-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.12s;
+}
+
+.ts-section:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.ts-section:active {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.ts-section.copied {
+  border-color: rgba(166, 227, 161, 0.4);
+  background: rgba(166, 227, 161, 0.1);
+}
+
+.ts-icon {
+  font-size: 14px;
+  opacity: 0.85;
+}
+
+.ts-values {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.ts-seconds {
+  font-size: 13px;
+  color: #4FC3F7;
+  font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  letter-spacing: 0.3px;
+}
+
+.ts-ms {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.4);
+  font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+}
