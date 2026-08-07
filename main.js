@@ -602,6 +602,10 @@ function curlToPython(curl) {
     } else if (a === '-k' || a === '--insecure') {
       verify = false
     } else if (a === '-L' || a === '--location') {
+    } else if (a === '--url') {
+      url = args[++i]
+    } else if (a.startsWith('--url=')) {
+      url = a.slice(6)
     } else if (a.startsWith('-')) {
       if (i + 1 < args.length && !args[i + 1].startsWith('-')) i++
     } else if (!url) {
