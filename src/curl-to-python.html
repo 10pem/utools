@@ -152,6 +152,35 @@
         color: #f38ba8;
         font-family: 'Cascadia Code','Fira Code','Consolas',monospace;
       }
+      .toggle-group {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        background: #11111b;
+        border: 1px solid #313244;
+        border-radius: 6px;
+        padding: 2px;
+      }
+      .toggle-btn {
+        background: transparent;
+        border: none;
+        color: #7f849c;
+        font-size: 11px;
+        padding: 3px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background 0.15s, color 0.15s;
+        white-space: nowrap;
+      }
+      .toggle-btn:hover { color: #cdd6f4; }
+      .toggle-btn.active { background: #313244; color: #cdd6f4; }
+      #htmlFrame {
+        flex: 1;
+        width: 100%;
+        border: none;
+        background: #fff;
+        display: none;
+      }
     </style>
   </head>
   <body>
@@ -168,6 +197,10 @@
         <div class="result-header">
           <h3>📥 响应结果</h3>
           <span class="status-badge" id="statusBadge">-</span>
+          <div class="toggle-group" id="htmlToggle" style="display:none">
+            <button class="toggle-btn active" id="htmlRawBtn">原文</button>
+            <button class="toggle-btn" id="htmlRenderBtn">渲染</button>
+          </div>
           <div class="search-bar" id="searchBar" style="display:none">
             <input class="search-input" id="searchInput" placeholder="搜索…" spellcheck="false">
             <span class="search-count" id="searchCount">0/0</span>
@@ -179,6 +212,7 @@
         <div class="result-body" id="resultBody">
           <div class="placeholder">点击「执行」运行代码</div>
         </div>
+        <iframe id="htmlFrame" sandbox="allow-same-origin"></iframe>
       </div>
     </div>
     <script>
@@ -194,11 +228,42 @@
       const searchPrev = document.getElementById('searchPrev')
       const searchNext = document.getElementById('searchNext')
       const searchClear = document.getElementById('searchClear')
+      const htmlToggle = document.getElementById('htmlToggle')
+      const htmlRawBtn = document.getElementById('htmlRawBtn')
+      const htmlRenderBtn = document.getElementById('htmlRenderBtn')
+      const htmlFrame = document.getElementById('htmlFrame')
 
       let bodyText = ''
+      let rawBody = ''
       let searchQuery = ''
       let searchHits = []
       let searchIndex = -1
+      let viewMode = 'raw'
+
+      function detectHtml(text) {
+        return /^\s*(<!doctype\s+html|<html[\s>])/i.test(text)
+      }
+
+      function formatBody(raw) {
+        const trimmed = raw.trim()
+        if (trimmed) {
+          try {
+            return JSON.stringify(JSON.parse(trimmed), null, 2)
+          } catch {}
+        }
+        return raw
+      }
+
+      function setViewMode(mode) {
+        viewMode = mode
+        htmlRawBtn.classList.toggle('active', mode === 'raw')
+        htmlRenderBtn.classList.toggle('active', mode === 'render')
+        const render = mode === 'render'
+        resultBody.style.display = render ? 'none' : ''
+        htmlFrame.style.display = render ? 'block' : 'none'
+        searchBar.style.display = render ? 'none' : (bodyText ? 'flex' : 'none')
+        if (render) htmlFrame.srcdoc = rawBody
+      }
 
       function escapeRegExp(s) {
         return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
@@ -314,8 +379,10 @@
         if (!code.trim()) return
 
         resultPanel.classList.add('open')
-        resultBody.textContent = ''
-        resultBody.className = 'result-body'
+        htmlToggle.style.display = 'none'
+        htmlFrame.style.display = 'none'
+        htmlFrame.srcdoc = ''
+        resultBody.style.display = ''
         bodyText = ''
         clearSearch()
         searchBar.style.display = 'none'
@@ -329,27 +396,35 @@
           statusBadge.textContent = res.statusCode ? `${res.statusCode}` : '错误'
           statusBadge.className = 'status-badge ' + (res.statusCode ? 'success' : 'error')
 
+          let isHtml = false
           if (res.error) {
             bodyText = res.error
             resultBody.className = 'result-body error-text'
           } else {
-            bodyText = res.body || '(空响应)'
+            rawBody = res.body || '(空响应)'
             resultBody.className = 'result-body'
+            bodyText = formatBody(rawBody)
+            isHtml = detectHtml(rawBody)
           }
+          htmlToggle.style.display = isHtml ? 'flex' : 'none'
           renderResultBody(bodyText, '')
-          searchBar.style.display = 'flex'
+          setViewMode('raw')
         } catch (e) {
           statusBadge.textContent = '错误'
           statusBadge.className = 'status-badge error'
           bodyText = e.message
           resultBody.className = 'result-body error-text'
+          htmlToggle.style.display = 'none'
           renderResultBody(bodyText, '')
-          searchBar.style.display = 'flex'
+          setViewMode('raw')
         } finally {
           runBtn.textContent = '▶ 执行'
           runBtn.classList.remove('running')
         }
       })
+
+      htmlRawBtn.addEventListener('click', () => setViewMode('raw'))
+      htmlRenderBtn.addEventListener('click', () => setViewMode('render'))
 
       editor.addEventListener('keydown', (e) => {
         if (e.key === 'Tab') {

@@ -277,11 +277,21 @@ function setupIPC() {
         })
       })
       if (stderr) return { statusCode: 0, body: stdout, error: stderr }
-      const lastLine = stdout.trim().split('\n').pop() || ''
-      const statusMatch = lastLine.match(/(\d{3})/)
+      const lines = stdout.split('\n')
+      let statusCode = 200
+      let last = lines[lines.length - 1]
+      if (last === '') {
+        lines.pop()
+        last = lines[lines.length - 1]
+      }
+      const statusMatch = last && (last.match(/^###STATUS###\s*(\d{3})\r?$/) || last.match(/^<Response \[(\d{3})\]\r?$/))
+      if (statusMatch) {
+        statusCode = parseInt(statusMatch[1])
+        lines.pop()
+      }
       return {
-        statusCode: statusMatch ? parseInt(statusMatch[1]) : 200,
-        body: stdout,
+        statusCode,
+        body: lines.join('\n'),
         error: null
       }
     } finally {
@@ -661,7 +671,7 @@ function curlToPython(curl) {
   if (!verify) code += ', verify=False'
   code += ')\n\n'
   code += 'print(response.text)\n'
-  code += 'print(response)\n'
+  code += "print('###STATUS###', response.status_code)\n"
   return code
 }
 
